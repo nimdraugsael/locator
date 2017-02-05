@@ -60,7 +60,7 @@ func handler(rw http.ResponseWriter, req *http.Request) {
 	loc := locator.Lookup(lreq)
 	if loc == nil {
 		log.Printf("Location lookup failed: %+v\n", lreq)
-		http.Error(rw, "Failed to figured out your location ¯\\_(ツ)_/¯", http.StatusTeapot)
+		http.Error(rw, "Failed to figure out your location ¯\\_(ツ)_/¯", http.StatusTeapot)
 		return
 	}
 

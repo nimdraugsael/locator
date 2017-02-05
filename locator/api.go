@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/kellydunn/golang-geo"
-	"github.com/localhots/pretty"
 )
 
 // Request is an element accepted by the API that contains all search parameters.
@@ -60,7 +59,6 @@ var (
 
 // Lookup tries to locate a city that matches given parameters.
 func Lookup(req Request) *Location {
-	pretty.Println(countries)
 	req.startedAt = time.Now()
 
 	// First look for a country match
