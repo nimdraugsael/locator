@@ -1,0 +1,17 @@
+image: core
+labels:
+  - role=locator
+network_mode: host
+expose:
+  - '8100'
+restart: always
+cap_drop:
+  - ALL
+entrypoint: locator
+ports:
+  - '8100:8100'
+command:
+  - --port=8100
+  - --config_dir=/etc/locator/configs
+volumes:
+  - ${CONFIG_PATH}:/etc/locator/configs:ro

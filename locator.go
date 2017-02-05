@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -68,8 +69,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	config_dir := flag.String("config_dir", "./configs", "config dir path")
+	port := flag.String("port", "8100", "port")
+
+	flag.Parse()
+
+	fmt.Printf("Config path %v\n", *config_dir)
+
 	start_time := time.Now()
-	db, err := geoip2.Open("/Users/nimdraug/Work/GeoLite2-City.mmdb")
+	db, err := geoip2.Open(*config_dir + "/GeoLite2-City.mmdb")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,15 +87,17 @@ func main() {
 	defer db.Close()
 
 	start_time = time.Now()
-	locator.InitAllCities("./configs/all_cities.json")
+	locator.InitAllCities(*config_dir + "/all_cities.json")
 	duration = time.Since(start_time)
 	fmt.Printf("Init by_city_and_country: %v\n", duration)
 
 	start_time = time.Now()
-	locator.InitPrimaryCities("./configs/primary_cities.json")
+	locator.InitPrimaryCities(*config_dir + "/primary_cities.json")
 	duration = time.Since(start_time)
 	fmt.Printf("Init by_country: %v\n", duration)
 
+	fmt.Printf("Listening on port :%v\n", *port)
 	http.HandleFunc("/whereami", handler)
-	http.ListenAndServe(":8100", nil)
+	http.ListenAndServe(":"+*port, nil)
+
 }

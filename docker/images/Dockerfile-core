@@ -1,0 +1,10 @@
+FROM golang:1.6.4-alpine
+MAINTAINER Aleksei Shaikhaleev <nimdraug.sael@gmail.com>
+
+RUN apk update && \
+  apk add git
+
+COPY ./locator.go /go/src/locator/
+COPY ./locator/ /go/src/locator/locator
+RUN cd /go/src/locator && go get -d -v && go install
+

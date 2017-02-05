@@ -1,0 +1,4 @@
+network_mode: bridge
+volumes:
+  - ${SOURCE_PATH}/configs:/etc/locator/configs:ro
+

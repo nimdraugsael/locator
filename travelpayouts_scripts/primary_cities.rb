@@ -27,5 +27,5 @@ Country.all.load.each do |country|
   end;
 end;
 
-r = JSON.pretty_generate(result);
+r = result.to_json()
 File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/primary_cities.json', r)

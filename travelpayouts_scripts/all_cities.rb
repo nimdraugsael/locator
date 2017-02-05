@@ -26,6 +26,6 @@ City.joins(:country).load.each do |city|
   end;
 end;
 
-r = JSON.pretty_generate(result);
+r = result.to_json();
 File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/all_cities.json', r)
 
