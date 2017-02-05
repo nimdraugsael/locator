@@ -11,6 +11,7 @@ import (
 
 	"github.com/nimdraugsael/locator/locator"
 	geoip2 "github.com/oschwald/geoip2-golang"
+	realip "github.com/tomasen/realip"
 )
 
 var GeoIP *geoip2.Reader
@@ -26,7 +27,11 @@ type (
 func handler(w http.ResponseWriter, r *http.Request) {
 	ip := r.URL.Query().Get("ip")
 	if ip == "" {
-		ip = "81.2.69.142"
+		ip = realip.RealIP(r)
+		if ip == "[::1]" {
+			// If localhost
+			ip = "81.2.69.142"
+		}
 	}
 	locale := r.URL.Query().Get("locale")
 	if locale == "" {
