@@ -22,7 +22,7 @@ type (
 		City         string
 		Timezone     string
 		Latitude     float64
-		Longtitude   float64
+		Longitude   float64
 		Translations []Translation
 	}
 	Translation struct {
@@ -36,7 +36,7 @@ type (
 		City         string
 		Timezone     string
 		Latitude     float64
-		Longtitude   float64
+		Longitude   float64
 		Translations map[string]Translation
 	}
 
@@ -86,10 +86,10 @@ func FindByCountry(country string) (TranslationMapItem, error) {
 	}
 }
 
-func FindByCoords(latitude, longtitude float64) (TranslationMapItem, error) {
+func FindByCoords(latitude, longitude float64) (TranslationMapItem, error) {
 	processed_coords_chunks := make(ProcessedCoordsChunks, 0)
 	for _, city := range ByCoordsList {
-		delta := math.Abs(city.Latitude-latitude) + math.Abs(city.Longtitude-longtitude)
+		delta := math.Abs(city.Latitude-latitude) + math.Abs(city.Longitude-longitude)
 
 		processed_chunk := ProcessedCoordsChunk{delta: delta, item: city}
 		processed_coords_chunks = append(processed_coords_chunks, processed_chunk)
@@ -114,7 +114,7 @@ func InitAllCities(config_path string) {
 			Country:      city.Country,
 			Timezone:     city.Timezone,
 			Latitude:     city.Latitude,
-			Longtitude:   city.Longtitude,
+			Longitude:   city.Longitude,
 			Translations: make(map[string]Translation)}
 
 		for _, translation := range city.Translations {

@@ -13,7 +13,7 @@ City.joins(:country).load.each do |city|
     city: city.english_name,
     timezone: city.time_zone,
     latitude: city.lat,
-    longtitude: city.lon,
+    longitude: city.lon,
     translations: translations
   })
   locales = city.country.translations.map(&:locale)

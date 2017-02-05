@@ -21,6 +21,7 @@ type (
 		Iata        string `json:"iata"`
 		Name        string `json:"name"`
 		CountryName string `json:"country_name"`
+		Coordinates string `json:"coordinates"`
 	}
 )
 
@@ -65,9 +66,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	duration := time.Since(start_time).Seconds() * 1000
 	fmt.Printf("Request %v %f ms\n", r.URL, duration)
 
+
+	// json_response := &JsonResponse{Iata: record.Country.IsoCode,
+	// 	Name:        result.Translations[locale].City,
+	// 	CountryName: result.Translations[locale].Country,
+	// 	Coordinates: strconv.FormatFloat(result.Latitude, 'f', -1, 64) + ":" +
+	// 		strconv.FormatFloat(result.Longitude, 'f', -1, 64)}
 	json_response := &JsonResponse{Iata: record.Country.IsoCode,
 		Name:        result.Translations[locale].City,
-		CountryName: result.Translations[locale].Country}
+		CountryName: result.Translations[locale].Country,
+		Coordinates: "Not Implemeted Yet"}
+
 
 	json_result, _ := json.Marshal(json_response)
 
