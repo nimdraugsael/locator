@@ -28,6 +28,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	ip := r.URL.Query().Get("ip")
 	if ip == "" {
 		ip = realip.RealIP(r)
+		fmt.Printf("RealIP %v\n", ip)
 		if ip == "[::1]" {
 			// If localhost
 			ip = "81.2.69.142"
