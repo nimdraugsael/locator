@@ -2,7 +2,7 @@ ActiveRecord::Base.logger = nil
 result = []
 count = 0
 count_all = City.count
-City.joins(:country).load.each do |city|
+City.joins(:country).limit(100).load.each do |city|
   count += 1
   puts "#{count} / #{count_all}"
   translations = []
@@ -27,5 +27,5 @@ City.joins(:country).load.each do |city|
 end;
 
 r = result.to_json();
-File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/all_cities.json', r)
+File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/all_cities_sample.json', r)
 

@@ -2,7 +2,7 @@ ActiveRecord::Base.logger = nil
 result = []
 count = 0
 count_all = Country.count
-Country.all.load.each do |country|
+Country.all.limit(100).load.each do |country|
   count += 1
   puts "#{count} / #{count_all}"
 
@@ -28,4 +28,4 @@ Country.all.load.each do |country|
 end;
 
 r = result.to_json()
-File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/primary_cities.json', r)
+File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/primary_cities_sample.json', r)
