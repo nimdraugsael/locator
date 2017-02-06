@@ -4,6 +4,7 @@ city_count_all = City.count
 CITIES = {}
 City.all.each do |city|
   city_count += 1
+  CITIES[city.id] = city
   puts "Cities -> memory: #{city_count}/#{city_count_all}"
 end;
 
@@ -42,6 +43,7 @@ CITIES.values.each do |city|
   if city_translations.nil? || country_translations.nil?
     puts "Translations not found, skipping"
     next
+  end
 
   city_translations.each do |locale, t|
     translations.push({
@@ -52,19 +54,22 @@ CITIES.values.each do |city|
   end
 
   result.push({
-    country_iata: country.iata,
-    country: country.english_name,
     city: city.english_name,
-    timezone: city.time_zone,
+    city_iata: city.iata,
+    country: country.english_name,
+    country_iata: country.iata,
     latitude: city.lat,
     longitude: city.lon,
-    translations: translations,
-    is_primary: PRIMARY_CITY_IDS.include?(city.id)
+    timezone: city.time_zone,
+    is_primary: PRIMARY_CITY_IDS.include?(city.id),
+    translations: translations
   })
 
   puts "Processing: #{result_count}/#{city_count_all}"
 end;
 
-json = Oj.dump(result);
-File.write('/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/cities.json', json)
+Oj.default_options = {:mode => :compat }
+json = Oj.dump(result, symbol_keys: false);
+
+File.write("/Users/nimdraug/Work/go/src/github.com/nimdraugsael/locator/configs/cities.json", json)
 

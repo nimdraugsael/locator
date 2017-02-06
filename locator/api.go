@@ -2,6 +2,7 @@ package locator
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/kellydunn/golang-geo"
@@ -24,7 +25,7 @@ type Location struct {
 	IATA        string `json:"iata"`
 	Name        string `json:"name"`
 	CountryName string `json:"country_name"`
-	TimeZone    string `json:"time_zone"`
+	TimeZone    string `json:"-"`
 	Coordinates string `json:"coordinates"`
 
 	Approach string        `json:"-"`
@@ -122,7 +123,7 @@ func (r Request) buildResponse(c *country, cit *city, approach string) *Location
 
 func (c *city) coords() string {
 	if c.lat != nil && c.long != nil {
-		return fmt.Sprintf("%.6f:%.6f", c.lat, c.long)
+		return fmt.Sprintf("%v:%v", strconv.FormatFloat(*c.long, 'f', -1, 64), strconv.FormatFloat(*c.lat, 'f', -1, 64))
 	}
 
 	return ""
