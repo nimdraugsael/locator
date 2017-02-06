@@ -12,6 +12,6 @@ ports:
   - '8100:8100'
 command:
   - --port=8100
-  - --config_dir=/etc/locator/configs
+  - --configs=/etc/locator/configs
 volumes:
   - ${CONFIG_PATH}:/etc/locator/configs:ro

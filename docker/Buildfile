@@ -1,1 +1,1 @@
-core: --build-arg USER_ID="$(id -u)" -t ${COMPOSE_PROJECT_NAME}/core:${REVISION}
+core: -t ${COMPOSE_PROJECT_NAME}/core:${REVISION}
