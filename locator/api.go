@@ -75,6 +75,11 @@ func Lookup(req Request) *Location {
 		}
 	}
 
+	// GeoIP returne 0:0 not found place
+	if req.Latitude == 0 && req.Longitude == 0 {
+		return nil
+	}
+
 	// Last resort: try to find the closest city within 100km
 	pt := geo.NewPoint(req.Latitude, req.Longitude)
 	if c, cit, ok := findCityWithinDistance(pt, 100); ok {

@@ -114,9 +114,6 @@ func requestIP(req *http.Request) string {
 	ip := realip.RealIP(req)
 	log.Info("Realip ", ip)
 	log.Info("IP from request ", req.RemoteAddr)
-	log.Info("Headers: REMOTE_ADDR ", req.Header.Get("REMOTE_ADDR"))
-	log.Info("Headers: HTTP_CLIENT_IP ", req.Header.Get("HTTP_CLIENT_IP"))
-	log.Info("Headers: HTTP_X_FORWARDED_FOR ", req.Header.Get("HTTP_X_FORWARDED_FOR"))
 
 	for name, headers := range req.Header {
 		for _, h := range headers {
