@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -69,6 +70,7 @@ func main() {
 
 func handler(rw http.ResponseWriter, req *http.Request) {
 	var err error
+	req.Header.Set("Access-Control-Allow-Origin", "*")
 
 	ip := net.ParseIP(requestIP(req))
 	geoCity, err := geoip2db.City(ip)
@@ -101,7 +103,15 @@ func handler(rw http.ResponseWriter, req *http.Request) {
 	}
 	log.Infof("Processed %f ms", loc.Took.Seconds()*1000)
 
-	json.NewEncoder(rw).Encode(loc)
+	result, _ := json.Marshal(loc)
+
+	if cb := req.FormValue("callback"); cb != "" {
+		req.Header.Set("Content-Type", "Type:application/x-javascript; charset=utf-8")
+		fmt.Fprintf(rw, "%v(%v);", cb, string(result))
+	} else {
+		req.Header.Set("Content-Type", "Type:application/json; charset=utf-8")
+		fmt.Fprint(rw, string(result))
+	}
 }
 
 func requestIP(req *http.Request) string {
