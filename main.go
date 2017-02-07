@@ -65,6 +65,7 @@ func main() {
 
 	log.Info("Starting server at port", port)
 	http.HandleFunc("/whereami", handler)
+	http.HandleFunc("/whereami2", handler)
 	http.ListenAndServe(":"+port, nil)
 }
 
