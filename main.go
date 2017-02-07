@@ -113,6 +113,7 @@ func requestIP(req *http.Request) string {
 	// Use request IP address by default
 	ip := realip.RealIP(req)
 	log.Info("Realip ", ip)
+	log.Info("IP from request ", req.RemoteAddr)
 	if ip == "[::1]" || ip == "127.0.0.1" {
 		// Substitute localhost value with a fake address
 		return "81.2.69.142"
