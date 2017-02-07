@@ -118,6 +118,12 @@ func requestIP(req *http.Request) string {
 	log.Info("Headers: HTTP_CLIENT_IP ", req.Header.Get("HTTP_CLIENT_IP"))
 	log.Info("Headers: HTTP_X_FORWARDED_FOR ", req.Header.Get("HTTP_X_FORWARDED_FOR"))
 
+	for name, headers := range req.Header {
+		for _, h := range headers {
+			log.Infof("all headers: %v %v", name, h)
+		}
+	}
+
 	if ip == "[::1]" || ip == "127.0.0.1" {
 		// Substitute localhost value with a fake address
 		return "81.2.69.142"
