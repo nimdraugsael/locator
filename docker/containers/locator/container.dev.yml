@@ -1,4 +1,4 @@
 network_mode: bridge
 volumes:
   - ${SOURCE_PATH}/configs:/etc/locator/configs:ro
-
+  - ${SOURCE_PATH}/bin:/tmp/bin:rw

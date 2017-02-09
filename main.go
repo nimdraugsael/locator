@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/DataDog/datadog-go/statsd"
+	newrelic "github.com/newrelic/go-agent"
 	"github.com/nimdraugsael/locator/locator"
 	logging "github.com/op/go-logging"
 	geoip2 "github.com/oschwald/geoip2-golang"
@@ -17,7 +17,6 @@ import (
 
 var (
 	geoip2db *geoip2.Reader
-	c        *statsd.Client
 )
 
 var log = logging.MustGetLogger("example")
@@ -26,9 +25,8 @@ var format = logging.MustStringFormatter(
 )
 
 func main() {
-	var configDir string
-	var port string
-	var logFile string
+	var configDir, port, logFile, newrelicKey string
+
 	stdoutLogBackend := logging.NewLogBackend(os.Stdout, "", 0)
 	stdoutLogFormatter := logging.NewBackendFormatter(stdoutLogBackend, format)
 	logging.SetBackend(stdoutLogFormatter)
@@ -36,6 +34,7 @@ func main() {
 	flag.StringVar(&configDir, "configs", "./configs", "Path to configs directory")
 	flag.StringVar(&port, "port", "8100", "Web server port")
 	flag.StringVar(&logFile, "log_file", "", "Path to log file")
+	flag.StringVar(&newrelicKey, "newrelic_key", "", "NewRelic key for monitoring")
 	flag.Parse()
 
 	if logFile != "" {
@@ -59,13 +58,19 @@ func main() {
 		log.Panicf("Failed to open cities database file: %v", err)
 	}
 
-	c, err = statsd.New("0.0.0.0:8125")
-	c.Namespace = "tp_locator"
-	c.Tags = append(c.Tags, "locator")
+	if newrelicKey != "" {
+		nrc := newrelic.NewConfig("TpLocator", newrelicKey)
+		nrapp, _ := newrelic.NewApplication(nrc)
+		log.Info("NewRelic monitoring ON")
+		http.HandleFunc(newrelic.WrapHandleFunc(nrapp, "/whereami", handler))
+		http.HandleFunc(newrelic.WrapHandleFunc(nrapp, "/whereami2", handler))
+	} else {
+		log.Info("NewRelic monitoring OFF")
+		http.HandleFunc("/whereami", handler)
+		http.HandleFunc("/whereami2", handler)
+	}
 
 	log.Info("Starting server at port", port)
-	http.HandleFunc("/whereami", handler)
-	http.HandleFunc("/whereami2", handler)
 	http.ListenAndServe(":"+port, nil)
 }
 
@@ -97,11 +102,6 @@ func handler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = c.Gauge(".request.duration", loc.Took.Seconds()*1000, nil, 1)
-	err = c.Incr(".request.count", nil, 1)
-	if err != nil {
-		log.Info("Sending to Datadog failed")
-	}
 	log.Infof("Processed %f ms", loc.Took.Seconds()*1000)
 
 	result, _ := json.Marshal(loc)
@@ -123,7 +123,6 @@ func requestIP(req *http.Request) string {
 
 	// Use request IP address by default
 	ip := realip.RealIP(req)
-	log.Info("Realip ", ip)
 
 	if ip == "[::1]" || ip == "127.0.0.1" {
 		// Substitute localhost value with a fake address
