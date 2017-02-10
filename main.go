@@ -76,14 +76,14 @@ func main() {
 
 func handler(rw http.ResponseWriter, req *http.Request) {
 	var err error
+	var loc *locator.Location
 	req.Header.Set("Access-Control-Allow-Origin", "*")
 
 	ip := net.ParseIP(requestIP(req))
 	geoCity, err := geoip2db.City(ip)
 	if err != nil {
 		log.Errorf("Failed to resolve IP address %s to geo point: %v\n", ip, err)
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		return
+		loc = locator.GetDefaultReponse(requestLocale(req))
 	}
 
 	lreq := locator.Request{
@@ -95,11 +95,10 @@ func handler(rw http.ResponseWriter, req *http.Request) {
 		Locale:      requestLocale(req),
 	}
 
-	loc := locator.Lookup(lreq)
+	loc = locator.Lookup(lreq)
 	if loc == nil {
 		log.Infof("Location lookup failed: %+v\n", lreq)
-		http.Error(rw, "Failed to figure out your location ¯\\_(ツ)_/¯", http.StatusTeapot)
-		return
+		loc = locator.GetDefaultReponse(requestLocale(req))
 	}
 
 	log.Infof("Processed %f ms", loc.Took.Seconds()*1000)
@@ -123,11 +122,6 @@ func requestIP(req *http.Request) string {
 
 	// Use request IP address by default
 	ip := realip.RealIP(req)
-
-	if ip == "[::1]" || ip == "127.0.0.1" {
-		// Substitute localhost value with a fake address
-		return "81.2.69.142"
-	}
 
 	return ip
 }

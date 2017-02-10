@@ -52,6 +52,7 @@ const (
 	approachExact   = "exact_match"
 	approachPrimary = "primary_city"
 	approachClosest = "closest_city"
+	approachDefault = "default"
 )
 
 var (
@@ -87,6 +88,21 @@ func Lookup(req Request) *Location {
 	}
 
 	return nil
+}
+
+func GetDefaultReponse(locale string) *Location {
+	c := countries["RU"]
+	cit := c.cities["Moscow"]
+
+	return &Location{
+		IATA:        "MOW",
+		Name:        firstNonEmptyString(cit.translations[locale], cit.translations[fallbackLocale]),
+		CountryName: firstNonEmptyString(c.translations[locale], c.translations[fallbackLocale]),
+		TimeZone:    cit.timezone,
+		Coordinates: cit.coords(),
+		Approach:    approachDefault,
+		Took:        0,
+	}
 }
 
 func findCityWithinDistance(from *geo.Point, maxDist float64) (c *country, cit *city, ok bool) {
